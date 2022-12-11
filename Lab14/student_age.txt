@@ -1,0 +1,4 @@
+Student ID: 31257
+Name: Alice
+Birthdate: 14/12/1993
+Age: 25
