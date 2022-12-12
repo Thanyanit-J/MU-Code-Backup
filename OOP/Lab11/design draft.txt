@@ -1,0 +1,45 @@
+=================================================
+
+Student
+- name : String
+- surname : String
+- section : int
+- ID : String 
+- enrolledCourse : Course[]
+1. enrollCourses(course : Course) : void
+2. makePayment(amount : int) : void
+3. checkPaymentStatus() : boolean
+4. getTotalEnrollmentFee : double
+
+=================================================
+
+Lecturer
+- name : String
+- surname : String
+- ID : String
+- taughtCourses : Courses[]
+
+=================================================
+
+Course
+- code : String
+- name : String
+- credit : int
+- description  : String
+- prerequisite : Course[]
+- credit_fee : double
+- max_seat : int
+- semister : int
+- academic_year : int
+- offering_status : boolean
+- lecturer : Lecturer
+- student :  Student[max_seat] // (LIST of student who enroll this course: both payment success and pending)
+
+1. updateCourse(code, name, credits, description, prerequisite, credit fee, max seat) : void
+2. getNumEnrolledStudents() {return student.length} : int
+3. getNumAvailableSeats() : int
+4. getTotalFee() : double
+5. getTotalPayment() : double
+6. checkOfferingStatus() {true if NumEnrolledStudents > 50% max seat} : boolean
+
+=================================================
