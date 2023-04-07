@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Login Log</title>
+
+    <script type="application/javascript">
+        async function callUserService(url, method, sentData = {/* DATA INPUT IN JSON FORMAT */ }) {
+            console.log(url);
+            let data;
+            if (method == "select" || method == "selectall") {
+                let response = await fetch(url, {
+                    method: 'GET'
+                });
+                data = await response.json();
+            }
+            return data;
+        }
+
+        $(document).ready(function () {
+            var id, email, uname, pw, fname, lname, lv, input;
+            const site = window.location.href.substring(0, window.location.href.length - 5);
+
+            ///////////////////////////////////////////////////////////////////////////////////
+
+
+            // SELECT
+            // Assign '/' to a variable
+            function filterVal(_input) {
+                if (_input == '')
+                    // %25 in URL stands for %; we assume that no one is going to search '%' in the filter
+                    return '%25/';
+                else
+                    return _input + '/';
+            }
+            // Get all accounts with firstname, lastname, or email containing the input string.
+            $("#select").click(function () {
+                search_log_id = filterVal($("#search_log_id").val());
+                fromtime = filterVal($("#fromtime").val());
+                totime = filterVal($("#totime").val());
+                search_id = filterVal($("#search_id").val());
+                callUserService(site + "/getlog/"+search_log_id+fromtime+totime+search_id, "select")
+                .then((data) => {
+                    console.log(data);
+                    if (data) {
+                        // alert(data.message);
+                        displayData(data);
+                    }
+                });
+            });
+
+            // SELECT ALL
+            function selectall() {
+                callUserService(site + "/getlogs/", "selectall")
+                    .then((data) => {
+                        console.log(data);
+                        if (data) {
+                            displayData(data);
+                        }
+                    });
+                return;
+            }
+            // Call select all on page load
+            selectall();
+
+            // Get data package and display it in the table
+            function displayData(data) {
+                let output = '';
+                $.each((data.data), function (index, item) {
+                    output += `<tr name="row" id="${item.log_id}">`;
+                    output += `<td name="log_id" id="${item.log_id}">${item.log_id}</td>`;
+                    output += `<td name="log_time" id="${item.log_id}">${item.log_time}</td>`;
+                    output += `<td name="id" id="${item.log_id}">${item.id}</td>`;
+                    output += `<td name="email" id="${item.log_id}">${item.email}</td>`;
+                    output += `<td name="uname" id="${item.log_id}">${item.username}</td>`;
+                    output += `<td name="fname" id="${item.log_id}">${item.firstname}</td>`;
+                    output += `<td name="lname" id="${item.log_id}">${item.lastname}</td>`;
+                    output += `<td name="lv" id="${item.log_id}">${item.level}</td>`;
+                    output += `</tr>`;
+                });
+                $("#dataDisplay").html(output);
+            }
+        });
+    </script>
+
+</head>
+
+<body style="background-image: url(Image/edit.jpg);" class="bg-tool">
+    <ul class="nav justify-content-end" style="background-color: white; ">
+        <li class="nav-item">
+            <a class="nav-link active" href="administatorsTool.html">Home</a>
+        <li class="nav-item">
+            <a class="nav-link active" href="addUser.html">Add</a>
+        <li class="nav-item">
+            <a class="nav-link active" href="log.html">Logs</a>
+        <li class="nav-item">
+            <a class="nav-link active" href="accountData.html">Account Data</a>
+        <li class="nav-item">
+            <a class="nav-link active" href="administrators.html">LOG OUT</a>
+    </ul>
+    <h1 class="display-2" style="margin-top: 60px; text-align: center;">Logs</h1>
+    <div class="card " style="width: 500px; margin-top: 30px;margin-left: auto; margin-right: auto; ">
+        <div class="card-body">
+            <div class="form">
+                <label for="ID" class="col-sm-3 col-form-label">Log ID:</label>
+                <div class="col-sm-9">
+                    <input type="email" class="form-control" id="search_log_id" name="search_log_id"
+                        placeholder="Input log ID">
+                </div>
+            </div>
+            <div class="form">
+                <label for="ID" class="col-sm-3 col-form-label">From:</label>
+                <div class="col-sm-9">
+                    <input type="datetime-local" class="form-control" id="fromtime" name="fromtime"
+                        placeholder="Input time">
+                </div>
+            </div>
+            <div class="form">
+                <label for="ID" class="col-sm-3 col-form-label">To:</label>
+                <div class="col-sm-9">
+                    <input type="datetime-local" class="form-control" id="totime" name="totime"
+                        placeholder="Input time">
+                </div>
+            </div>
+            <div class="form">
+                <label for="ID" class="col-sm-3 col-form-label">User ID</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="search_id" name="search_id"
+                        placeholder="Input User ID">
+                </div>
+            </div>
+            <div class="col-sm-3" style="align-items: center; margin-top: 10px;">
+                <button type="button" class="btn btn-primary" data-toggle="modal" id="select"
+                    data-target="#modalSearch">Search</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Display Table -->
+
+    <div class="card" style="margin-right: auto; margin-left: auto; margin-top: 30px;">
+        <div class="card-body">
+            <table class="table" style="margin-left: 30px; margin-right: 60px;" id="displayTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Login Time</th>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tfoot class="thead-dark">
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Login Time</th>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Level</th>
+                    </tr>
+                </tfoot>
+                <tbody id="dataDisplay">
+                    <!-- Output data here -->
+                </tbody>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

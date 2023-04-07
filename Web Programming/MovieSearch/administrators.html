@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script type="application/javascript">
+    function callUserService(url, method, sentData = {/* DATA INPUT IN JSON FORMAT */ }) {
+      console.log(url);
+      let data;
+      if (method == "login") {
+        let response = fetch(url, {
+          method: 'GET'
+        });
+        data = response;
+      }
+      return data;
+    }
+    $(document).ready(function () {
+      var id, email, uname, pw, fname, lname, lv, input;
+      // cut last 5 chars '.html' from the url
+      const site = window.location.href.substring(0, window.location.href.length - 5);
+
+      $("#login").click(function () {
+        uname = $("#uname").val();
+        pw = $("#pw").val();
+        if (uname == '' || pw == '')
+          $("#login_error_display").html("Username or password is missing.")
+        else
+          // console.log(data_json);
+          callUserService(site + "/login/" + uname + "/" + pw, "login")
+            .then((data) => {
+              console.log(data);
+              if (data) {
+                // If the username and password are correct, get the link and redirect to that link
+                if(data.status==200)
+                $(location).attr('href', data.url)
+                else
+                  $("#login_error_display").html(data.statusText)
+              }
+            });
+      });
+    });
+  </script>
+</head>
+
+<body style="background-image:url(Image/login-background.png); align-items:center; background-size:100%;">
+  <ul class="nav justify-content-end" style="background-color: white; ">
+    <li class="nav-item">
+      <a class="nav-link active" href="login.html">User</a>
+  </ul>
+
+  <!-- INPUT DATA HERE -->
+  <h2 class="display-2" style="margin-top: 60px; text-align: center;">Administrators Login</h1>
+    <div class="card " style="width: 500px; margin-top: 30px;margin-left: auto; margin-right: auto; ">
+      <div class="card-body">
+        <form>
+          <div class="form-group">
+            <label for="exampleInputEmail1">User Name</label>
+            <input type="userName" class="form-control rounded-pill" id="uname">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control rounded-pill" id="pw">
+          </div>
+          <div id="login_error_display">
+            <!-- Display error here: code 1 for missing input, code 2 for incorrect username or password -->
+          </div>
+
+        </form>
+        <button class="btn btn-primary rounded-pill">
+          <a class="w3-btn w3-black" style="color: aliceblue;" id="login">LOGIN</a></button>
+      </div>
+    </div>
+</body>
+
+</html>

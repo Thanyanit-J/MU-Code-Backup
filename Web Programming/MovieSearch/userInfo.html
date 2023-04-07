@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+        </script>
+    <script src="modal.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css"> -->
+    <link rel="stylesheet" href="style.css">
+
+    <script type="application/javascript">
+        async function callUserService(url, method, sentData = {/* DATA INPUT IN JSON FORMAT */ }) {
+            console.log(url);
+            let data;
+                if (method == method == "update" || method == "delete") {
+                    let aMethod;
+                    if (method == "update") aMethod = "PUT";
+                    else if (method == "delete") aMethod = "DELETE";
+
+                    let response = await fetch(url, {
+                        method: aMethod,
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(sentData)
+                    });
+                    data = await response.json();
+                }
+                else if (method == "select") {
+                    let response = await fetch(url, {
+                        method: 'GET'
+                    });
+                    data = await response.json();
+                }
+                else if (method == "selectall") {
+                    let response = await fetch(url, {
+                        method: 'GET'
+                    });
+                    data = await response.json();
+                }
+                return data;
+        }
+
+        $(document).ready(function () {
+            var id, email, uname, pw, fname, lname, lv, input;
+            const site = window.location.href.substring(0,window.location.href.length-5 );
+
+            ////////////////////////////////////////////////////////////////////////////////////
+
+            // UPDATE account
+            $("#confirm_edit").click(function () {
+                id = $("#id").val();
+                email = $("#email").val();
+                uname = $("#uname").val();
+                fname = $("#fname").val();
+                lname = $("#lname").val();
+                // lv = $("input[type='radio'][name='lv']:checked").val();
+                let data_json = {
+                    user: {
+                        id: id,
+                        email: email,
+                        username: uname,
+                        firstname: fname,
+                        lastname: lname
+                    }
+                };
+                console.log(data_json);
+                callUserService(site +"/user/", "update", data_json)
+                .then((data) => {
+                    console.log(data);
+                    if (data) {
+                        alert(data.message);
+                    }
+                });
+            });
+            // When clicking UPDATE of that account, auto-fill the form with the current information
+            $(document).on('click','button[name="update"]', function(){
+                const id = $(this).attr("id");
+                $("#id").val(id);
+                $("#email").val($(`td[id='${id}'][name='email']`).text());
+                $("#uname").val($(`td[id='${id}'][name='uname']`).text());
+                $("#fname").val($(`td[id='${id}'][name='fname']`).text());
+                $("#lname").val($(`td[id='${id}'][name='lname']`).text());
+                // $(`#${$("td[id='${id}'][name='lv']").text()}`).prop("checked", true);
+            });
+
+
+            // DELETE account
+            $("#delete").click(function () {
+                email = $("#email").val();
+                // email = $(".email").attr("id");
+                let data_json = {
+                    user: {
+                        email: email
+                    }
+                }
+
+                callUserService(site + "/delete/", "delete", data_json)
+                .then((data) => {
+                    console.log(data);
+                    if (data) {
+                        alert(data.message);
+                    }
+                });
+            });
+
+            // SELECT
+            // Get all accounts with firstname, lastname, or email containing the input string.
+            $("#select").click(function () {
+                // If nothing is selected, it basically means SELECT ALL
+                if($("#input").val()=='') {
+                    callUserService(site + "/selectuser/", "select")
+                    .then((data) => {
+                        console.log(data);
+                        if (data) {
+                            alert(data.message);
+                        }
+                    });
+                }
+                else {
+                    input = $("#input").val();
+                    console.log(input);
+                    callUserService(site + "/selectuser/"+input, "select")
+                    .then((data) => {
+                        console.log(data);
+                        if (data) {
+                            alert(data.message);
+                        }
+                    });
+                }
+            });
+
+           
+
+            // SELECT ALL USERS
+            function selectall(){
+                callUserService(site + "/users/", "selectall")
+                // callUserService(site + "/users/", "selectall")
+                    .then((data) => {
+                        console.log(data);
+                        if (data) {
+                            displayData(data);
+                        }
+                    });
+            }
+            // Call select all on page load
+            selectall();
+            $("#selectAll").click(function () {
+                selectall();
+            });
+        });
+
+        // Get data package and display it in the table
+        function displayData(data){
+            let output = '';
+            $.each((data.data), function (index, item) {
+                output+=`<tr name="row" id="${item.id}">`;
+                output+=`<td name="id" id="${item.id}">${item.id}</td>`;
+                output+=`<td name="email" id="${item.id}">${item.email}</td>`;
+                output+=`<td name="fname" id="${item.id}">${item.firstname}</td>`;
+                output+=`<td name="lname" id="${item.id}">${item.lastname}</td>`;
+                output+=`<td name="uname" id="${item.id}">${item.username}</td>`;
+                output+=`<td><button type="button" class="btn btn-primary" data-toggle="modal"`;
+                output+=`data-target="#modalEdit" name="update" id="${item.id}">Edit</button></td>`;
+                output+=`<td><button type="button" class="btn btn-danger" data-toggle="modal"`;
+                output+=`data-target="#modalDelete" name="delete" id="${item.id}">Delete</button></td>`;
+                output+=`</tr>`;
+                $("#userDisplay").html(output);
+            });
+        }
+    </script>
+</head>
+    <body style="background-image: url(Image/edit.jpg);" id="bg">
+        <ul class="nav justify-content-end" style="background-color: white;">
+            <li class="nav-item">
+               <a class="nav-link active" href="addUser.html">Add</a>
+            <li class="nav-item">
+                <a class="nav-link active" href="userInfo.html">User Info</a>
+            <li class="nav-item">
+                <a class="nav-link active" href="log.html">Logs</a> 
+            <li class="nav-item">
+                <a class="nav-link active" href="administatorInfo.html">Admin Info</a> 
+            <li class="nav-item">
+                <a class="nav-link active" href="administrators.html">LOG OUT</a>          
+          </ul>
+        <h1 class="display-2" style="margin-top: 60px; text-align: center;">User Information</h1>
+        <div class="card" style="margin-right: auto; margin-left: auto;">
+            <div class="card-body">
+                <table class="table" style="margin-left: 30px; margin-right: 30px;" id="displayTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tfoot class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>First Name</abbr></th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                    </tfoot>
+                    <tbody id="userDisplay">
+                        <!-- Output data here -->
+                    </tbody>
+    
+            </div>
+        </div>
+    
+        <!-- Modal Edit-->
+        <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form">
+                            <label for="ID" class="col-sm-3 col-form-label">Email:</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Input Email">
+                            </div>
+                        </div>
+                        <div class="form">
+                            <label for="name" class="col-sm-3 col-form-label">Username:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="uname" name="uname" placeholder="Input First name">
+                            </div>
+                        </div>
+                        <div class="form">
+                                <label for="name" class="col-sm-3 col-form-label">First Name:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="fname" name="fname" placeholder="Input FIrst name">
+                                </div>
+                        </div>
+                        <div class="form">
+                            <label for="name" class="col-sm-3 col-form-label">Last Name:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="lname" name="lname" placeholder="Input Last name">
+                            </div>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="id" id="id" value="">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" id="confirm_edit">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Modal Delete-->
+    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDeleteLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete this user account?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger"  id="confirm_delete">Yes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    </body>     
+</html>                                   

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <!-- Google Fonts Roboto -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="MDB-Free_4.17.0/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="MDB-Free_4.17.0/css/mdb.min.css">
+
+  <!-- jQuery -->
+  <script type="text/javascript" src="MDB-Free_4.17.0/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="MDB-Free_4.17.0/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="MDB-Free_4.17.0/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="MDB-Free_4.17.0/js/mdb.min.js"></script>
+
+  <!-- Twitter -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <script src=search.js></script>
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <title>Movie Search System</title>
+  <style>
+    .card {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .bg {
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    body {
+      background-color: rgba(255, 255, 255, 0.6);
+      background-blend-mode: lighten;
+    }
+  </style>
+</head>
+
+<body class="bg pb-5" style="background-image:url(Image/unnamed2.jpg)">
+  <!-- nav bar -->
+  <nav class="nav peach-gradient py-2 mb-4 font-weight-bold z-depth-1 justify-content-end">
+      <a class="nav-link white-text mr-2" href="/login.html">Logout</a>
+  </nav>
+
+  <!-- header -->
+  <center>
+    <header class="my-4">
+      <h1 class="display-4">Movie Search System</h1>
+      <p class="lead">Welcome to our Project </p>
+      <p>Movie industry has become the largest industry and earns enormous amounts of money. <br>
+        People are more interested in movies and searching more about the information.</p>
+    </header>
+  </center>
+
+  <!-- search bar -->
+  <nav class="navbar aqua-gradient d-flex justify-content-center">
+    <form class="form-inline my-2 text-white">
+      <label for="query">Search Movie:&nbsp;&nbsp;</label> 
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" id="query">
+      <button class="btn blue-gradient" type="button" style="border-radius: 30px;" onClick="search()">Search</button>
+    </form>
+  </nav>
+
+  <!-- search output -->
+  <section class="py-3">
+    <div class="container-fluid px-5">
+      <div class="row grid-divider">
+        <!-- OMDb -->
+        <div class="col-lg-3 my-1">
+          <div class="card">
+            <div class="card-header bg-secondary text-center text-white">OMDb</div>
+              <div class="card" id="omdb"></div>
+          </div>
+        </div>
+        <!-- Youtube -->
+        <div class="col-lg-3 my-1">
+          <div class="card">
+            <div class="card-header bg-danger text-center text-white">Youtube</div>
+              <div class="card" id="youtube"></div>
+          </div>
+        </div>
+        <!-- Spotify -->
+        <div class="col-lg-3 my-1">
+          <div class="card">
+            <div class="card-header bg-success text-center text-white">Spotify</div>
+            <div class="card" id="spotify"></div>
+          </div>
+        </div>
+        <!-- Twitter -->
+        <div class="col-lg-3 my-1">
+          <div class="card">
+            <div class="card-header info-color text-center text-white">Twitter</div>
+            <div class="card" id="twitter"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>

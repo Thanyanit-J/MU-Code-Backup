@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Add</title>
+
+    <script type="application/javascript">
+        async function callUserService(url, method, sentData = {/* DATA INPUT IN JSON FORMAT */ }) {
+            console.log(url);
+            let data;
+            if (method == "insert") {
+                let response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(sentData)
+                });
+                data = await response.json();
+            }
+            return data;
+        }
+
+        $(document).ready(function () {
+            var id, email, uname, pw, fname, lname, lv, input;
+            const site = window.location.href.substring(0,window.location.href.length-5 );
+
+            // Reset all input boxes to blank
+            function clearInput() {
+                $("#email").val('');
+                $("#uname").val('');
+                $("#pw").val('');
+                $("#fname").val('');
+                $("#lname").val('');
+                $("input[id='lname']").val('');
+                $("input[type='radio'][name='lv']").prop('checked', false);
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////
+
+            // INSERT
+            // Create new account (of any level)
+            $("#insert").click(function () {
+                email = $("#email").val();
+                // email = $(".email").attr("id");
+                uname = $("#uname").val();
+                pw = $("#pw").val();
+                fname = $("#fname").val();
+                lname = $("#lname").val();
+                lv = $("input[type='radio'][name='lv']:checked").val();
+
+                // json form of the data gotten from the DB
+                let data_json = {
+                    user: {
+                        email: email,
+                        username: uname,
+                        password: pw,
+                        firstname: fname,
+                        lastname: lname,
+                        level: lv
+                    }
+                }
+                // console.log(data_json);
+                callUserService(site + "/insert/", "insert", data_json)
+                    .then((data) => {
+                        if (data) {
+                            alert(data.message);
+                            // Successfully add data will clear all input boxes
+                            if(data.error === false){
+                                clearInput();
+                            }
+                        }
+                    });
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <body style="background-image: url(Image/edit.jpg);" class="bg-tool">
+
+         <!-- Nav Bar -->
+        <ul class="nav justify-content-end" style="background-color: white; ">
+            <li class="nav-item">
+                <a class="nav-link active" href="administatorsTool.html">Home</a>
+            <li class="nav-item">
+               <a class="nav-link active" href="addUser.html">Add</a>
+            <li class="nav-item">
+                <a class="nav-link active" href="log.html">Logs</a> 
+            <li class="nav-item">
+                <a class="nav-link active" href="accountData.html">Account Data</a> 
+            <li class="nav-item">
+                <a class="nav-link active" href="administrators.html">LOG OUT</a>
+          </ul>
+          
+           <!-- Input Data -->
+        <h2 class="display-2" style="margin-top: 60px; text-align: center;">Add New User</h1>
+            <div class="card " style="width: 500px; margin-top: 30px;margin-left: auto; margin-right: auto; ">
+               <div class="card-body">
+                    <div class="form">
+                        <label for="ID" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Input Email">
+                        </div>
+                    </div>
+                    <div class="form">
+                        <label for="name" class="col-sm-3 col-form-label">First Name:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="fname" name="fname" placeholder="Input First name">
+                        </div>
+                        <div class="form">
+                            <label for="name" class="col-sm-3 col-form-label">Last Name:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="lname" name="lname" placeholder="Input Last name">
+                            </div>
+                    </div>
+                    <div class="form">
+                        <label for="username" class="col-sm-3 col-form-label">Username:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="uname" name="uname" placeholder="Input Username">
+                        </div>
+                    </div>
+                    <div class="form">
+                        <label for="release" class="col-sm-3 col-form-label">Password:</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="pw" name="pw" placeholder="Input Password">
+                        </div>
+                    </div>
+                
+                    <div class="form">
+                        <label for="actor" class="col-sm-3 col-form-label">Level:</label>
+                        <div class="col-sm-9">
+                            <div class="control">
+                                <label class="radio">
+                                  <input type="radio" name="lv" id="User" value="2">
+                                  User
+                                </label>
+                                <label class="radio">
+                                  <input type="radio" name="lv" id="Admin" value="1">
+                                  Admin
+                                </label>
+                              </div>
+                        </div>
+                    </div><br>
+                    <div class="col-sm-3" style="align-items: center;">
+                        <button type="submit" value="Submit" class="btn btn-primary btn-block rounded-0 py-2" id="insert">
+                            Add</button>
+                    </div>
+               </div>
+             </div>
+    
+         </body>
